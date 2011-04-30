@@ -33,7 +33,7 @@ void led_main(void)
         reg |= 0x1;
         *(volatile uint32_t *)0xE000E010 = reg;
         
-        //carico una costante pari a 5999999 in modo tale che il contatore scenda a zero dopo un quarto di secondo
+        //carico una costante pari a 999999 in modo tale che il contatore scenda a zero dopo un secondo
         TBV(valoreconteggio);
         
         
@@ -45,21 +45,24 @@ void led_main(void)
 	      reg &= 0x00010000;
 	      reg = (reg >> 16);
 	      
-	      if (acceso & reg)
+	      while(reg)
 	      {
-		    //spengo i led
-		    *(volatile uint32_t *)0x5003003c = 0xf;
-		    *(volatile uint32_t *)0x500203c0 = 0xfff;
-		    acceso = 0;
-		    TBV(valoreconteggio); //aggiorno il contatore
-	      }
-	      else if ((!acceso) & reg)
-	      {
-		    //accendo i led
-		    *(volatile uint32_t *)0x5003003c = 0x0;
-		    *(volatile uint32_t *)0x500203c0 = 0x0;
-		    acceso = 1;
-		    TBV(valoreconteggio); //aggiorno il contatore
+		    if (acceso & reg)
+		    {
+			  //spengo i led
+			  *(volatile uint32_t *)0x5003003c = 0xf;
+			  *(volatile uint32_t *)0x500203c0 = 0xfff;
+			  acceso = 0;
+			  TBV(valoreconteggio); //aggiorno il contatore
+		    }
+		    else if ((!acceso) & reg)
+		    {
+			  //accendo i led
+			  *(volatile uint32_t *)0x5003003c = 0x0;
+			  *(volatile uint32_t *)0x500203c0 = 0x0;
+			  acceso = 1;
+			  TBV(valoreconteggio); //aggiorno il contatore
+		    }
 	      }
         }
 }
