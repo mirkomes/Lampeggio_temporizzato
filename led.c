@@ -3,7 +3,8 @@
 void led_main(void)
 {
         int acceso = 0;
-        uint32_t valoreconteggio = 0x005B8D7F;
+        //uint32_t valoreconteggio = 0x005B8D7F;
+        uint32_t valoreconteggio = 0x000F423F;
         
         //programmo la porta 3 in uscita
         *(volatile uint32_t *)0x50038000 = 0x0f;
@@ -18,11 +19,11 @@ void led_main(void)
         
         
         //abilitazione del system time clock divider
-        //imposto una divisione per 3 in modo da ottenere una frequenza di 24Mhz (la frequenza del chip è di
-        //72 Mhz).
+        //imposto una divisione per 12 in modo da ottenere una frequenza di 1Mhz (la frequenza del chip è di
+        //12 Mhz).
         
         reg = *(volatile uint32_t *)0x400480B0;
-        reg |= 0x3;
+        reg |= 0xC;
         *(volatile uint32_t *)0x400480B0 = reg;
         
         //abilitazione del system tick timer e configurazione in modo tale che prenda il clock dal system timer
