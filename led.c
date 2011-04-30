@@ -2,7 +2,7 @@
 
 void led_main(void)
 {
-        int acceso = 0;
+        int acceso = 0, s = 0;
         //uint32_t valoreconteggio = 0x005B8D7F;
         uint32_t valoreconteggio = 0x000F423F;
         
@@ -36,7 +36,6 @@ void led_main(void)
         //carico una costante pari a 999999 in modo tale che il contatore scenda a zero dopo un secondo
         TBV(valoreconteggio);
         
-        
         while(1)
         {
 	      //verifico se si è alzato il flag di passaggio per lo zero
@@ -45,24 +44,74 @@ void led_main(void)
 	      reg &= 0x00010000;
 	      reg = (reg >> 16);
 	      
-	      while(reg)
+	      if (acceso & reg)
 	      {
-		    if (acceso & reg)
+		    switch(s)
 		    {
-			  //spengo i led
-			  *(volatile uint32_t *)0x5003003c = 0xf;
-			  *(volatile uint32_t *)0x500203c0 = 0xfff;
-			  acceso = 0;
-			  TBV(valoreconteggio); //aggiorno il contatore
+			  case 0:
+				//spengo i primi 2 led
+				*(volatile uint32_t *)0x5003000c = 0xf;
+				*(volatile uint32_t *)0x50030030 = 0x0;
+				*(volatile uint32_t *)0x500203c0 = 0x0;
+				break;
+			  case 1:
+				//spengo altri 2 led
+				*(volatile uint32_t *)0x5003003c = 0xf;
+				*(volatile uint32_t *)0x500203c0 = 0x0;
+				break;
+			  case 2:
+				//spengo altri 2 led
+				*(volatile uint32_t *)0x5003003c = 0xf;
+				*(volatile uint32_t *)0x500200c0 = 0xfff;
+				*(volatile uint32_t *)0x50020300 = 0x0;
+				break;
+			  case 3:
+				//spengo altri 2 led
+				*(volatile uint32_t *)0x5003003c = 0xf;
+				*(volatile uint32_t *)0x500203c0 = 0xfff;
+				acceso = 0;
+				s = -1;
+				break;
+			  default:
+				break;
 		    }
-		    else if ((!acceso) & reg)
-		    {
-			  //accendo i led
-			  *(volatile uint32_t *)0x5003003c = 0x0;
-			  *(volatile uint32_t *)0x500203c0 = 0x0;
-			  acceso = 1;
-			  TBV(valoreconteggio); //aggiorno il contatore
-		    }
+		    //aggiorno la variabile di stato dei led
+		    s++;
 	      }
+	      else if ((!acceso) & reg)
+	      {
+		    switch(s)
+		    {
+			  case 0:
+				//accendo i primi 2 led
+				*(volatile uint32_t *)0x5003000c = 0x0;
+				*(volatile uint32_t *)0x50030030 = 0xf;
+				*(volatile uint32_t *)0x500203c0 = 0xfff;
+				break;
+			  case 1:
+				//accendo altri 2 led
+				*(volatile uint32_t *)0x5003003c = 0x0;
+				*(volatile uint32_t *)0x500203c0 = 0xfff;
+				break;
+			  case 2:
+				//accendo altri 2 led
+				*(volatile uint32_t *)0x5003003c = 0x0;
+				*(volatile uint32_t *)0x500200c0 = 0x0;
+				*(volatile uint32_t *)0x50020300 = 0xfff;
+				break;
+			  case 3:
+				//accendo altri 2 led
+				*(volatile uint32_t *)0x5003003c = 0x0;
+				*(volatile uint32_t *)0x500203c0 = 0x0;
+				acceso = 1;
+				s = -1;
+				break;
+			  default:
+				break;
+		    }
+		    //aggiorno la variabile di stato dei led
+		    s++;
+	      }
+	      TBV(valoreconteggio); //aggiorno il contatore
         }
 }
