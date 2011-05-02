@@ -15,7 +15,7 @@ _led_entry_rom:
 	cmp	r0, r1
 	bge	_led_entry
 	/*copia le celle di memoria puntante da r2 che parte dall'indirizzo _erom e le salva
-	nella sezione puntata da r0 che parte da _sdata fino a quando la zonda .data non viene saturata*/
+	nella sezione puntata da r0 che parte da _sdata fino a quando la zona .data non viene saturata*/
 	ldmia	r2!, {r4, r5, r6, r7}
 	stmia	r0!, {r4, r5, r6, r7}
 	b	10b

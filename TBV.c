@@ -1,6 +1,4 @@
 #include <stdint.h>
-//la costante TBV viene reimpostata sul contatore come una somma in modo da non avere dei tempi persi
-//(il contatore è di tipo free running)
 
 void TBV(uint32_t cost)
 {
